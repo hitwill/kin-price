@@ -1,27 +1,23 @@
-var dashInt;
+var kinInt;
 var ecbInt;
 
 function displayStuff() {
-    var dash = "" +
-        "     ;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;`   .;;;;;;;;;;;;;;;  ;;;;        ;;;;\n" +
-        "    .;;;;;;;;;;;;;;;.  ;;;;;;;;;;;;;;;;  .;;;;;;;;;;;;;;;` .;;;;       `;;;;\n" +
-        "    ;;;;;;;;;;;;;;;;. `;;;;;;;;;;;;;;;;  ;;;;;;;;;;;;;;;;  ;;;;        ;;;;`\n" +
-        "                 ;;;;  ;;;;`       :;;;. .;;;;              ;;;;        ;;;;\n" +
-        "   ```````       ;;;;  ;;;;        ;;;;  ;;;;,.````....    `;;;;.``````,;;;;\n" +
-        "  ;;;;;;;.      :;;;: `;;;;  `.````;;;;  ;;;;;;;;;;;;;;;`  ;;;;;;;;;;;;;;;;.\n" +
-        "   ;;;;;;;       ;;;;  ;;;;.  ;;;;;;;;;:  .;;;;;;;;;;;;;;;  ;;;;;;;;;;;;;;;;\n" +
-        "   ```````       ;;;;  ;;;;  `;;;;;;;;;     `````````:;;;. `;;;;````````;;;;\n" +
-        "                .;;;; `;;;;  `````.;;;;              ;;;;  ;;;;`       .;;;:\n" +
-        "     ;;;;;;;;;;;;;;;;` :;;;.       `;;;;  ;;;;;;;;;;;;;;;;  ;;;;        ;;;;\n" +
-        "     ;;;;;;;;;;;;;;;;  ;;;;        ;;;;` :;;;;;;;;;;;;;;;   ;;;;        ;;;;\n" +
-        "    .;;;;;;;;;;;;;;:   ;;;;        ;;;;  ;;;;;;;;;;;;;;;`  :;;;.       `;;;:\n"
-    console.log(dash);
+  
+
+    var kin = "" +
+        "___  ________  ___\n" +
+        "| | / /_  _| \ | |\n" +
+        "| ' /  | | |  \| |\n" +
+        "|  <   | | | . ` |\n" +
+        "| . \ _| |_| |\  |\n" +
+        "|_|\_\_____|_| \_|\n";
+    console.log(kin);
 }
 function setTitle() {
     var curr = options.currency.get();
-    var price = DashPrice.getPrice(curr);
+    var price = KinPrice.getPrice(curr);
     chrome.browserAction.setTitle({
-        'title': '1 Dash = ' + price + " " + curr
+        'title': '1 Kin = ' + price + " " + curr
     });
 };
 function setBadgeColor(color) {
@@ -49,7 +45,7 @@ function setBadge(multiplicator) {
     var p = options.precision.get();
     var d = options.divider.get();
     
-    var price = DashPrice.getPrice(curName);
+    var price = KinPrice.getPrice(curName);
     price = price / d;
     price = price.toFixed(p);
     var text = price;
@@ -68,16 +64,16 @@ function prepareBadge() {
     });
 }
 function refreshBadgeAndTitle() {
-    DashPrice
+    KinPrice
         .fetch
-        .dashPrice()
+        .kinPrice()
         .then(function () {
             var curr = options.currency.get();
-            var price = DashPrice.getPrice(curr);
+            var price = KinPrice.getPrice(curr);
             setPriceInHistory(price);
             setTitle();
             if(shouldMonitorWealth()===true){
-                var wealth = DashPrice.getWealth()
+                var wealth = KinPrice.getWealth()
                 setBadge(wealth);
             }else{
                 setBadge();
@@ -110,7 +106,7 @@ function setPriceInHistory(newPrice) {
         store.set('lastMax', newPrice.toFixed(5));
     } else {
         if ((options.notificationMax.get() === true) && newPrice > options.lastMax.get()) {
-            notify('New maximum Dash price', 'The highest price is now ' + newPrice);
+            notify('New maximum Kin price', 'The highest price is now ' + newPrice);
         }
         if (newPrice > options.lastMax.get()) {
             setBadgeColor('green');
@@ -122,7 +118,7 @@ function setPriceInHistory(newPrice) {
         store.set('lastMin', newPrice.toFixed(5));
     } else {
         if ((options.notificationMin.get() === true) && newPrice < options.lastMin.get()) {
-            notify('New minimum Dash price', 'The lowest price is now ' + newPrice);
+            notify('New minimum Kin price', 'The lowest price is now ' + newPrice);
         }
         if (newPrice < options.lastMin.get()) {
             setBadgeColor('red');
@@ -145,11 +141,11 @@ function setPriceInHistory(newPrice) {
 function launchInterval() {
     var period = options.refresh.get();
     period = period * 1000;
-    dashInt = setInterval(function () {
+    kinInt = setInterval(function () {
         refreshBadgeAndTitle();
     }, period);
     ecbInt = setInterval(function(){
-        DashPrice
+        KinPrice
             .fetch
             .currencyList()
     },4*60*60*1000);//We refresh ECB rates every 6 hours
@@ -171,11 +167,11 @@ var AJAX = {
         });
     }
 }
-var DashPrice = {
+var KinPrice = {
     //in USD
     currencyExchangesRates: {},
     currentBitcoinRate: {},
-    currentDashRate: {},
+    currentKinRate: {},
     priceHistory: [
         {datetime: 1002, price: 0.15},
         {datetime: 1000, price: 0.10},
@@ -187,7 +183,7 @@ var DashPrice = {
         return value;
     },
     getPrice: function (currency) {
-        var value = JSON.parse(store.get('currentDashRate'))[currency];
+        var value = JSON.parse(store.get('currentKinRate'))[currency];
         return value;
     },
     getRefreshInterval: function () {
@@ -197,24 +193,24 @@ var DashPrice = {
         return this.priceHistory;
     },
     fetch: {
-        dashPrice: function () {
+        kinPrice: function () {
             return AJAX
-                .get("https://api.coinmarketcap.com/v1/ticker/dash/")
+                .get("https://api.coinmarketcap.com/v1/ticker/kin/")
                 .then(function (data) {
                     if (data) {
                         data = JSON.parse(data);
                         if (Array.isArray(data))
                             data = data[0];
                         
-                        var DashInUSD = data.price_usd;
-                        var DashInBTC = data.price_btc;
-                        DashPrice.currentDashRate['BTC'] = parseFloat(DashInBTC);
+                        var KinInUSD = data.price_usd;
+                        var KinInBTC = data.price_btc;
+                        KinPrice.currentKinRate['BTC'] = parseFloat(KinInBTC);
                         var currencyExchange = JSON.parse(store.get('currencyExchangesRates'));
                         
                         for (var cur in currencyExchange) {
-                            DashPrice.currentDashRate[cur] = parseFloat(currencyExchange[cur]) * (DashInUSD);
+                            KinPrice.currentKinRate[cur] = parseFloat(currencyExchange[cur]) * (KinInUSD);
                         }
-                        store.set('currentDashRate', JSON.stringify(DashPrice.currentDashRate));
+                        store.set('currentKinRate', JSON.stringify(KinPrice.currentKinRate));
                         
                     }
                 })
@@ -232,10 +228,10 @@ var DashPrice = {
                             data = data[0];
                         
                         var btcInUSD = data.price_usd;
-                        for (var cur in DashPrice.currencyExchangesRates) {
-                            DashPrice.currentBitcoinRate[cur] = parseFloat(DashPrice.currencyExchangesRates[cur]) * (btcInUSD);
+                        for (var cur in KinPrice.currencyExchangesRates) {
+                            KinPrice.currentBitcoinRate[cur] = parseFloat(KinPrice.currencyExchangesRates[cur]) * (btcInUSD);
                         }
-                        store.set('currentBitcoinRate', JSON.stringify(DashPrice.currentBitcoinRate));
+                        store.set('currentBitcoinRate', JSON.stringify(KinPrice.currentBitcoinRate));
                         
                     }
                 })
@@ -255,17 +251,17 @@ var DashPrice = {
                     if (xml.getElementsByTagName('Cube')[2].attributes['currency'].value == "USD") {
                         var valueUSDEUR = xml.getElementsByTagName('Cube')[2].attributes['rate'].value;
                         var valueEURUSD = 1 / valueUSDEUR;
-                        DashPrice.currencyExchangesRates['USD'] = 1;
-                        DashPrice.currencyExchangesRates['EUR'] = valueEURUSD;
+                        KinPrice.currencyExchangesRates['USD'] = 1;
+                        KinPrice.currencyExchangesRates['EUR'] = valueEURUSD;
                         for (var i = 3; i < xmlList.length; i++) {
                             var el = (xml.getElementsByTagName('Cube')[i]);
                             var cur = el.attributes['currency'].value;
                             var rat = el.attributes['rate'].value;
-                            DashPrice.currencyExchangesRates[cur] = rat * valueEURUSD;
+                            KinPrice.currencyExchangesRates[cur] = rat * valueEURUSD;
                         }
-                        store.set('currencyExchangesRates', JSON.stringify(DashPrice.currencyExchangesRates));
+                        store.set('currencyExchangesRates', JSON.stringify(KinPrice.currencyExchangesRates));
                         
-                        return DashPrice.currencyExchangesRates;
+                        return KinPrice.currencyExchangesRates;
                     }
                 });
         }
@@ -434,7 +430,7 @@ var store = {
                 case "currencyExchangesRates":
                     localStorage.setItem(_k, "{}");
                     break;
-                case "currentDashRate":
+                case "currentKinRate":
                     localStorage.setItem(_k, "{}");
                     break;
                 case "divider":
@@ -495,7 +491,7 @@ var store = {
                         defaultKey(_k);
                     }
                     break;
-                case "currentDashRate":
+                case "currentKinRate":
                     try {
                         var j = JSON.parse(_v);
                     } catch (e) {
@@ -639,7 +635,7 @@ var store = {
         }
         
         var valid = true;
-        var keysList = ['currency', 'currencyExchangesRates', 'currentDashRate', 'divider', 'history', 'lastMax', 'lastMin', 'notificationMax', 'notificationMin', 'precision', 'refresh', "monitorWealth",'wealth'];
+        var keysList = ['currency', 'currencyExchangesRates', 'currentKinRate', 'divider', 'history', 'lastMax', 'lastMin', 'notificationMax', 'notificationMin', 'precision', 'refresh', "monitorWealth",'wealth'];
         for (var index in keysList) {
             var key = keysList[index];
             if (localStorage.hasOwnProperty(key)) {

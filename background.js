@@ -7,17 +7,17 @@ function loadBackground() {
         prepareListener();
     
     
-        DashPrice
+        KinPrice
             .fetch
             .currencyList()
             .then(function () {
-                DashPrice
+                KinPrice
                     .fetch
-                    .dashPrice()
+                    .kinPrice()
                     .then(function () {
                         setTitle();
                         if(shouldMonitorWealth()===true){
-                            var wealth = DashPrice.getWealth()
+                            var wealth = KinPrice.getWealth()
                             setBadge(wealth);
                         }else{
                             setBadge();
@@ -30,10 +30,10 @@ function loadBackground() {
     }
 }
 
-function fetchDashPrice(cb) {
-    DashPrice
+function fetchKinPrice(cb) {
+    KinPrice
         .fetch
-        .dashPrice()
+        .kinPrice()
         .then(function () {
             setTitle();
             setBadge();
@@ -53,7 +53,7 @@ function prepareListener() {
                 if (request && request.hasOwnProperty('type')) {
                     switch (request.type) {
                         case "priceHistory":
-                            sendResponse(DashPrice.getPriceHistory());
+                            sendResponse(KinPrice.getPriceHistory());
                             break;
                     }
                 }
