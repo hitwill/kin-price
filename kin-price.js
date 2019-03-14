@@ -213,15 +213,15 @@ var KinPrice = {
     fetch: {
         kinPrice: function () {
             return AJAX
-                .get("https://api.coinmarketcap.com/v1/ticker/kin/")
+                .get("https://api.coingecko.com/api/v3/simple/price?ids=kin&vs_currencies=BTC%2CUSD")
                 .then(function (data) {
                     if (data) {
                         data = JSON.parse(data);
                         if (Array.isArray(data))
                             data = data[0];
                         
-                        var KinInUSD = data.price_usd;
-                        var KinInBTC = data.price_btc;
+                        var KinInUSD = data.kin.usd;
+                        var KinInBTC = data.kin.btc;
                         KinPrice.currentKinRate['BTC'] = parseFloat(KinInBTC);
                         var currencyExchange = JSON.parse(store.get('currencyExchangesRates'));
                         
