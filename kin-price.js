@@ -40,20 +40,38 @@ function setBadgeColor(color) {
         color: HexaColor
     });
 }
+
+function trimZeros(text) {
+    //0.000400050400
+    text = parseFloat(text.toString().split(".")[1]).toString();
+    //5000504
+    text = parseFloat("0." + text);
+    //0.5000504
+    text = text.toFixed(3);
+    //0.5 (rounded properly)
+    text = text.replace(/\./g, '');//now remove the dot
+    return (text);
+}
+
 function setBadge(multiplicator) {
     var curName = options.currency.get();
-    var p = options.precision.get();
-    var d = options.divider.get();
+    var p = 0;//options.precision.get();
+    var d = 1;//options.divider.get();
     
     var price = KinPrice.getPrice(curName);
     price = price / d;
-    price = price.toFixed(p);
+    price = price;
     var text = price;
     if(multiplicator!==undefined){
-        text = (text*multiplicator).toFixed(p);
+        text = (text * multiplicator);
     }
+
+    if (text < 0.001) {
+        text = trimZeros(text);
+    }
+
     chrome.browserAction.setBadgeText({
-        'text': text
+        'text': text.toString()
     });
 }
 function prepareBadge() {
@@ -73,7 +91,7 @@ function refreshBadgeAndTitle() {
             setPriceInHistory(price);
             setTitle();
             if(shouldMonitorWealth()===true){
-                var wealth = KinPrice.getWealth()
+                var wealth = KinPrice.getWealth();
                 setBadge(wealth);
             }else{
                 setBadge();

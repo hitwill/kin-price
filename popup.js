@@ -48,11 +48,6 @@ function loadPopup() {
         // chrome.runtime.sendMessage(evt.detail);
     
     
-        var kinIcon = document.getElementById("logo-icon");
-        kinIcon.onclick=function(e){
-            var redirectWindow = window.open('https://www.kin.org', '_blank');
-            redirectWindow.location;
-        };
         var refreshIcon = document.getElementById("refresh-icon");
         refreshIcon.onclick=function(e){
             rotateRefreshIcon();
@@ -64,7 +59,7 @@ function loadPopup() {
         }; 
         var githubIcon = document.getElementById("github-icon");
         githubIcon.onclick=function(e){
-            var redirectWindow = window.open('https://github.com/Alex-Werner/kin-price', '_blank');
+            var redirectWindow = window.open('https://github.com/hitwill/kin-price', '_blank');
             redirectWindow.location;
         };
     }

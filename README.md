@@ -44,3 +44,5 @@ Google Chrome extension that shows kin price in USD and monitor it
 - Able to monitor the fiat equivalent of your wealth in kin instead of the price
 - Allow you to multiply/divide the price (Useful for some money like KRW where 1 Kin = 22311 KRW, you might want to count with K KRW (ie : 22.311K KRW)
 - Allow you to select the refresh rate from 10s to once every 4 hours
+
+Credit to original code on: https://github.com/Alex-Werner/kin-price

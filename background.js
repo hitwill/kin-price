@@ -44,7 +44,6 @@ function fetchKinPrice(cb) {
 function prepareListener() {
     chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
-            console.log('Received');
             
             if (sender.tab) {
                 //RECEIVED FROM A CONTENT SCRIPT : Options ?
